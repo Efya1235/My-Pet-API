@@ -1,0 +1,101 @@
+async function getRandomDog() {
+  const apiUrl = 'https://dog.ceo/api/breeds/image/random';
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    if (response.ok) {
+      const breed = await extractBreedFromImageUrl(data.message);
+      const breedInfo = await fetchDogBreedInfo(breed);
+      const randomDogImage = data.message;
+      displayDog(randomDogImage, breedInfo);
+    } else {
+      console.error('Error fetching data:', data.message);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+async function searchDog() {
+  const searchInput = document.getElementById('dogSearchInput').value.trim();
+  if (!searchInput) {
+    alert('Please enter a dog breed.');
+    return;
+  }
+
+  const breedInfo = await fetchDogBreedInfo(searchInput);
+  if (breedInfo) {
+    const randomDogImage = await getRandomDogImage(searchInput);
+    displayDog(randomDogImage, breedInfo);
+  } else {
+    alert('Dog breed not found. Please try another one.');
+  }
+}
+
+async function extractBreedFromImageUrl(imageUrl) {
+  const breed = imageUrl.split('/')[4];
+  return breed;
+}
+
+async function fetchDogBreedInfo(breed) {
+  const apiUrl = `https://api.thedogapi.com/v1/breeds/search?q=${breed}`;
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    if (response.ok && data.length > 0) {
+      const breedInfo = {
+        breed: data[0].name,
+        food: data[0].food,
+        temperament: data[0].temperament
+      };
+      return breedInfo;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching breed info:', error);
+    return null;
+  }
+}
+
+async function getRandomDogImage(breed) {
+  const apiUrl = `https://dog.ceo/api/breed/${breed}/images/random`;
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    if (response.ok) {
+      return data.message;
+    } else {
+      console.error('Error fetching dog image:', data.message);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching dog image:', error);
+    return null;
+  }
+}
+
+function displayDog(imageUrl, breedInfo) {
+  const dogImageContainer = document.getElementById('dogImageContainer');
+  const dogInfoDiv = document.getElementById('dogInfo');
+
+  if (!breedInfo) {
+    dogInfoDiv.innerText = 'Failed to retrieve dog information.';
+    return;
+  }
+
+  const info = `
+    <p>Breed: ${breedInfo.breed}</p>
+    <p>Food: ${breedInfo.food}</p>
+    <p>Temperament: ${breedInfo.temperament}</p>
+  `;
+
+  dogImageContainer.innerHTML = `<img src="${imageUrl}" alt="Dog Image">`;
+  dogInfoDiv.innerHTML = info;
+}

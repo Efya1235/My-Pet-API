@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dog API App</title>
+    <link rel="stylesheet" href="c&j/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Dog API App</h1>
+        <div class="search-container">
+            <input type="text" id="dogSearchInput" placeholder="Search for a dog breed">
+            <button onclick="searchDog()">Search</button>
+        </div>
+        <div id="dogImageContainer"></div>
+        <div id="dogInfo"></div>
+    </div>
+    <script src="c&j/app.js"></script>
+</body>
+</html>
